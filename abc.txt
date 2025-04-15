@@ -1,0 +1,342 @@
+console.log("Welcome To Cancion");
+
+let songIndex = 0;
+let audioElement = new Audio('songs/1.mp3');
+let masterPlay=document.getElementById('masterPlay');
+let myProgessBar = document.getElementById('myProgressBar');
+let gif = document.getElementById('gif');
+let masterSongName = document.getElementById('masterSongName');
+let songItems=Array.from(document.getElementsByClassName('songItem'));
+
+let songs = [
+    {songName: "Maan Meri Jaan", filePath:"songs/1.mp3", coverPath:"covers/1.jpg"},
+    {songName: "Dekha Hazaaro Dafa", filePath:"songs/2.mp3", coverPath:"covers/2.jpg"},
+    {songName: "Humsafar", filePath:"songs/3.mp3", coverPath:"covers/3.jpg"},
+    {songName: "Sakiyaan", filePath:"songs/4.mp3", coverPath:"covers/4.jpg"},
+    {songName: "Raataan Lambiyan", filePath:"songs/5.mp3", coverPath:"covers/5.jpg"},
+    {songName: "Kesariya", filePath:"songs/6.mp3", coverPath:"covers/6.jpg"},
+    {songName: "Phir Aur Kya Chaiye", filePath:"songs/7.mp3", coverPath:"covers/7.jpg"},
+]
+
+songItems.forEach((element, i) => {
+    element.getElementsByTagName("img")[0].src = songs[i].coverPath;
+
+    // Check if the element with the class "songName" exists before setting its innerText
+    const songNameElements = element.getElementsByClassName("songName");
+    if (songNameElements.length > 0) {
+        songNameElements[0].innerText = songs[i].songName;
+    } else {
+        console.error(`No element with class "songName" found for songItem ${i}.`);
+    }
+});
+
+
+
+
+// audioElement.play();
+
+//Handle play.pause
+masterPlay.addEventListener('click',()=>{
+    if(audioElement.paused || audioElement.currentTime<=0){
+        audioElement.play();
+        masterPlay.classList.remove('fa-play-circle');
+        masterPlay.classList.add('fa-pause-circle');
+        gif.style.opacity=1;
+    }
+    else{
+        audioElement.pause();
+        masterPlay.classList.remove('fa-pause-circle');
+        masterPlay.classList.add('fa-play-circle');
+        gif.style.opacity=0;
+    }
+})
+
+//Listen to events
+audioElement.addEventListener('timeupdate', ()=>{
+    //Update Seekbar
+    progress=parseInt((audioElement.currentTime/audioElement.duration)*100);
+    myProgessBar.value =progress;
+})
+
+myProgessBar.addEventListener('change',()=>{
+    audioElement.currentTime = myProgessBar.value*audioElement.duration/100;
+})
+
+const makeAllPlays = () => {
+    Array.from(document.getElementsByClassName('songItemPlay')).forEach((element) => {
+        element.classList.remove('fa-pause-circle');
+        element.classList.add('fa-play-circle');
+    });
+};
+
+Array.from(document.getElementsByClassName('songItemPlay')).forEach((element)=>{
+    element.addEventListener('click',(e)=>{
+        console.log(e.target);
+        makeAllPlays();
+        songIndex = parseInt(e.target.id);
+        e.target.classList.remove('fa-play-circle');
+        e.target.classList.add('fa-pause-circle');
+        audioElement.src = `songs/${songIndex+1}.mp3`;
+        masterSongName.innerText=songs[songIndex].songName;
+        audioElement.currentTime=0;
+        audioElement.play();
+        gif.style.opacity = 1;
+        masterPlay.classList.remove('fa-play-circle');
+        masterPlay.classList.add('fa-pause-circle');
+    })
+})
+
+//next song
+document.getElementById('next').addEventListener('click',()=>{
+    if(songIndex>=6){
+        songIndex=0;
+    }
+    else{
+        songIndex += 1;
+    }
+    audioElement.src = `songs/${songIndex+1}.mp3`;
+    masterSongName.innerText=songs[songIndex].songName;
+    audioElement.currentTime=0;
+    audioElement.play();
+    gif.style.opacity = 1;
+    masterPlay.classList.remove('fa-play-circle');
+    masterPlay.classList.add('fa-pause-circle');
+})
+
+//previous song
+document.getElementById('previous').addEventListener('click',()=>{
+    if(songIndex<=0){
+        songIndex=0;
+    }
+    else{
+        songIndex -= 1;
+    }
+    audioElement.src = `songs/${songIndex+1}.mp3`;
+    masterSongName.innerText=songs[songIndex].songName;
+    audioElement.currentTime=0;
+    audioElement.play();
+    gif.style.opacity = 1;
+    masterPlay.classList.remove('fa-play-circle');
+    masterPlay.classList.add('fa-pause-circle');
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400&family=Varela+Round&display=swap');
+body{
+    background-color: aquamarine;
+}
+
+*{
+    margin : 0;
+    padding : 0;
+}
+
+nav{
+    font-family: 'Ubuntu', sans-serif ;
+}
+
+nav ul{
+    display: flex;
+    align-items: center;
+    list-style-type: none;
+    height: 65px;
+    background-color: black;
+    color: white;
+}
+
+nav ul li{
+    padding: 0 12px;
+}
+
+.brand img{
+    width: 100px;
+}
+
+.brand{
+    display: flex;
+    align-items: center;
+    font-weight: bolder;
+    font-size: 1.3rem;
+}
+
+.container{
+    min-height: 64vh;
+    background-color: black;
+    color: white;
+    font-family: 'Varela Round' , sans-serif;
+    display: flex;
+    width: 70%;
+    margin: 23px auto;
+    border-radius: 12px;
+    padding: 34px;
+    background-image: url('bg.png');
+}
+
+.bottom{
+    position: sticky;
+    height: 130px;
+    background-color: black;
+    color: white;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.icons{
+    margin-top: 14px;
+}
+
+.icons i{
+    cursor: pointer;
+}
+
+#myProgressBar{
+    width: 80vw;
+    text-align: center;
+    cursor: pointer;
+}
+
+.songItem{
+    height: 45px;
+    display: flex;
+    background-color: white;
+    color: black;
+    margin: 15px 0;
+    justify-self: space-between;
+    align-items: center;
+    border-radius: 100px;
+}
+
+.songItem img{
+    width: 43px;
+    margin: 0 23px;
+    border-radius: 34px;
+}
+
+.timestamp{
+    margin: 0 45px;
+}
+
+.timestamp i{
+    cursor: pointer;
+}
+
+.songInfo{
+    position: absolute;
+    left: 9.55vw;
+    font-family: 'Varela Round' , sans-serif;
+}
+
+.songInfo img{
+    opacity: 0;
+    transition: opacity 0.4s ease-in;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancion - Your favorite music is here! </title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li class="brand"><img src = "logo.png" alt = "Cancion"> Cancion </li>
+            <li>Home</li>
+            <li>About</li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="Songlist">
+            <h1>Best Songs</h1>
+            <div class="songItemContainer">
+                <div class="songItem">
+                    <img alt="1">
+                    <span class="songName">Maan Meri Jaan</span>
+                    <span class="songlistplay"><span class="timestamp">05:34 <i id = "0" class="far songItemPlay fa-play-circle"></i>  </span></span>
+                </div>
+                <div class="songItem">
+                    <img alt="1">
+                    <span class="songName">Dekha Hazaaro Dafa</span>
+                    <span class="songlistplay"><span class="timestamp">05:34 <i id = "1" class="far songItemPlay fa-play-circle"></i>  </span></span>
+                </div>
+                <div class="songItem">
+                    <img alt="1">
+                    <span class="songName">Humsafar</span>
+                    <span class="songlistplay"><span class="timestamp">05:34 <i id = "2" class="far songItemPlay fa-play-circle"></i>  </span></span>
+                </div>
+                <div class="songItem">
+                    <img alt="1">
+                    <span class="songName">Sakiyaan</span>
+                    <span class="songlistplay"><span class="timestamp">05:34 <i id = "3" class="far songItemPlay fa-play-circle"></i>  </span></span>
+                </div>
+                <div class="songItem">
+                    <img alt="1">
+                    <span class="songName">Raataan Lambiyan</span>
+                    <span class="songlistplay"><span class="timestamp">05:34 <i id = "4" class="far songItemPlay fa-play-circle"></i>  </span></span>
+                </div>
+                <div class="songItem">
+                    <img alt="1">
+                    <span class="songName">Kesariya</span>
+                    <span class="songlistplay"><span class="timestamp">05:34 <i id = "5" class="far songItemPlay fa-play-circle"></i>  </span></span>
+                </div>
+                <div class="songItem">
+                    <img alt="1">
+                    <span class="songName">Phir Aur Kya Chaiye</span>
+                    <span class="songlistplay"><span class="timestamp">05:34 <i id = "6" class="far songItemPlay fa-play-circle"></i>  </span></span>
+                </div>
+            </div>
+        </div>
+        <div class="SongBanner"></div>
+    </div>
+
+    <div class="bottom">
+        <input type="range" name="range" id="myProgressBar" min="0" value="0" max="100">
+        <div class="icons">
+            <!--fontawesome icons-->
+            <i class="fas fa-3x fa-step-backward" id="previous"></i>
+            <i class="far fa-3x fa-play-circle" id="masterPlay"></i>
+            <i class="fas fa-3x fa-step-forward" id="next"></i>
+        </div>
+        <div class="songInfo">
+            <img src="playing.gif" width="42px" alt="" id="gif"> <span id="masterSongName"></span>
+        </div>
+    </div>
+    <script src="https://kit.fontawesome.com/26504e4a1f.js" crossorigin="anonymous"></script>
+    <script src="script.js"></script>
+</body>
+</html>
